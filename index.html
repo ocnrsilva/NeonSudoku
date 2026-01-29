@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f172a">
     
-    <!-- Import Map: Essencial para rodar React direto no navegador -->
+    <!-- Import Map: Versões fixas para estabilidade no servidor -->
     <script type="importmap">
 {
   "imports": {
@@ -37,6 +37,7 @@
             padding: 0;
             background-color: #0f172a;
             overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
         }
         #initial-loader {
             position: fixed;
@@ -67,6 +68,16 @@
             font-size: 0.75rem;
             text-transform: uppercase;
         }
+        .sudoku-grid {
+            aspect-ratio: 1 / 1;
+            touch-action: manipulation;
+        }
+        @keyframes pulse-glow {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(1.5); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+        .animate-completion { animation: pulse-glow 0.6s ease-out; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100">
@@ -81,16 +92,16 @@
     <script type="module" src="./index.tsx"></script>
 
     <script>
-        // Fallback: Se após 5 segundos o React não carregar, tenta remover o loader
-        // para mostrar possíveis erros no console.
-        setTimeout(() => {
+        // Remove o loader assim que o conteúdo for renderizado ou após 4s
+        const hideLoader = () => {
             const loader = document.getElementById('initial-loader');
-            if (loader && loader.style.opacity !== '0') {
-                console.log("Removendo loader via timeout de segurança...");
+            if (loader) {
                 loader.style.opacity = '0';
                 setTimeout(() => loader.remove(), 500);
             }
-        }, 5000);
+        };
+        window.addEventListener('load', () => setTimeout(hideLoader, 500));
+        setTimeout(hideLoader, 4000);
     </script>
 </body>
 </html>
